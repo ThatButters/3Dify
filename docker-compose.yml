@@ -1,0 +1,37 @@
+# 3Dify — docker-compose for VPS deployment
+#
+# If you already have PostgreSQL running externally (e.g. on the host),
+# remove the `db` service and `depends_on` block, and set DATABASE_URL
+# directly in your .env file pointing to your existing Postgres instance.
+
+services:
+  server:
+    build: ./server
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data/uploads:/app/uploads
+      - ./data/outputs:/app/outputs
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-threedify}
+      POSTGRES_USER: ${POSTGRES_USER:-threedify}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
