@@ -68,7 +68,8 @@ export default function Home() {
         </div>
       </div>
 
-      <footer className="py-6 text-center border-t border-[var(--color-border)]">
+      <footer className="py-6 text-center border-t border-[var(--color-border)] space-y-1">
+        <p className="text-xs text-[var(--color-muted-2)]">20 free uploads per day per IP</p>
         <a
           href="https://github.com/ThatButters/3Dify"
           target="_blank"
