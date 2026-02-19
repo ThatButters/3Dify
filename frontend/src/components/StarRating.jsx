@@ -17,12 +17,12 @@ export default function StarRating({ onSubmit, disabled }) {
 
   if (submitted) {
     return (
-      <div className="text-sm text-gray-400 flex items-center gap-2">
-        <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="text-sm text-[var(--color-muted)] flex items-center gap-2">
+        <svg className="w-4 h-4 text-[var(--color-success)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
         </svg>
         Thanks for rating!
-        {rating >= 4 && <span className="text-gray-500">Added to gallery.</span>}
+        {rating >= 4 && <span className="text-[var(--color-muted-2)]">Added to gallery.</span>}
       </div>
     );
   }
@@ -37,11 +37,11 @@ export default function StarRating({ onSubmit, disabled }) {
             onClick={() => setRating(star)}
             onMouseEnter={() => setHover(star)}
             onMouseLeave={() => setHover(0)}
-            className="p-0.5 transition-transform hover:scale-110 disabled:opacity-50"
+            className="p-0.5 transition-transform hover:scale-125 disabled:opacity-50"
           >
             <svg
               className={`w-6 h-6 ${
-                star <= (hover || rating) ? 'text-yellow-500' : 'text-gray-600'
+                star <= (hover || rating) ? 'text-[var(--color-warning)]' : 'text-[var(--color-muted-2)]'
               } transition-colors`}
               fill={star <= (hover || rating) ? 'currentColor' : 'none'}
               stroke="currentColor"
@@ -55,7 +55,7 @@ export default function StarRating({ onSubmit, disabled }) {
       {rating > 0 && (
         <button
           onClick={handleSubmit}
-          className="text-xs px-3 py-1 rounded-md bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+          className="text-xs px-3 py-1 rounded-md btn-accent transition-colors"
         >
           Submit
         </button>

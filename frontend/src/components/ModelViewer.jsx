@@ -1,6 +1,6 @@
 export default function ModelViewer({ glbUrl }) {
   return (
-    <div className="rounded-xl overflow-hidden border border-[var(--color-border)] bg-[#0a0a0a]">
+    <div className="glass-strong rounded-2xl overflow-hidden glow-accent-sm relative">
       <model-viewer
         src={glbUrl}
         auto-rotate
@@ -13,10 +13,11 @@ export default function ModelViewer({ glbUrl }) {
           background: '#0a0a0a',
         }}
       >
-        <div slot="poster" className="flex items-center justify-center h-full text-gray-500 text-sm">
+        <div slot="poster" className="flex items-center justify-center h-full text-[var(--color-muted)] text-sm">
           Loading 3D model...
         </div>
       </model-viewer>
+      <div className="absolute top-4 left-4 text-xs font-mono text-[var(--color-muted-2)]">Interactive 3D Viewer</div>
     </div>
   );
 }

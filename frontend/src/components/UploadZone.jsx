@@ -36,55 +36,66 @@ export default function UploadZone({ onUpload, disabled }) {
 
   return (
     <div className="w-full max-w-lg mx-auto">
-      <div
-        {...getRootProps()}
-        className={`
-          relative rounded-xl border-2 border-dashed p-12 text-center cursor-pointer
-          transition-all duration-200
-          ${isDragActive
-            ? 'border-blue-500 bg-blue-500/5'
-            : 'border-[var(--color-border)] hover:border-gray-500 hover:bg-white/[0.02]'}
-          ${uploading ? 'pointer-events-none opacity-60' : ''}
-        `}
-      >
-        <input {...getInputProps()} />
+      {/* Gradient border wrapper */}
+      <div className="rounded-2xl p-[1px] bg-gradient-to-b from-[var(--color-border-2)] to-transparent">
+        <div className="rounded-2xl bg-[var(--color-surface)] p-1">
+          <div
+            {...getRootProps()}
+            className={`
+              border-2 border-dashed rounded-xl p-10 sm:p-14 text-center cursor-pointer
+              transition-all duration-250
+              ${isDragActive
+                ? 'border-[var(--color-accent)]/40 glow-accent-sm'
+                : 'border-[var(--color-border-2)] hover:border-[var(--color-accent)]/30'}
+              ${uploading ? 'pointer-events-none opacity-60' : ''}
+            `}
+          >
+            <input {...getInputProps()} />
 
-        {preview ? (
-          <div className="space-y-4">
-            <img
-              src={preview}
-              alt="Preview"
-              className="mx-auto max-h-48 rounded-lg object-contain"
-            />
-            {uploading && (
-              <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
-                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-                Uploading...
+            {preview ? (
+              <div className="space-y-4">
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="mx-auto max-h-48 rounded-lg object-contain"
+                />
+                {uploading && (
+                  <div className="flex items-center justify-center gap-2 text-sm text-[var(--color-muted)]">
+                    <svg className="w-4 h-4 animate-spin text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Uploading...
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-5">
+                <div className="w-14 h-14 rounded-2xl bg-[var(--color-accent)]/10 flex items-center justify-center mx-auto">
+                  <svg className="w-7 h-7 text-[var(--color-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm mb-1">
+                    {isDragActive ? 'Drop your photo here' : 'Drag & drop your photo'}
+                  </p>
+                  <p className="text-xs text-[var(--color-muted-2)] mb-6">JPG, PNG, WEBP up to 20MB</p>
+                </div>
+                <button
+                  type="button"
+                  className="px-6 py-2.5 btn-accent text-sm font-medium rounded-xl glow-accent-sm"
+                >
+                  Choose File
+                </button>
               </div>
             )}
           </div>
-        ) : (
-          <div className="space-y-3">
-            <div className="mx-auto w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
-              <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 16V4m0 0l-4 4m4-4l4 4M4 20h16" />
-              </svg>
-            </div>
-            <div>
-              <p className="text-sm text-gray-300">
-                {isDragActive ? 'Drop your photo here' : 'Drag & drop a photo, or click to browse'}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">JPG, PNG, WEBP up to 20MB</p>
-            </div>
-          </div>
-        )}
+        </div>
       </div>
 
       {error && (
-        <p className="mt-3 text-sm text-red-400 text-center">{error}</p>
+        <p className="mt-3 text-sm text-[var(--color-danger)] text-center">{error}</p>
       )}
     </div>
   );

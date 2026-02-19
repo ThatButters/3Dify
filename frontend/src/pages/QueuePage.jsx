@@ -2,69 +2,92 @@ import { useEffect, useState } from 'react';
 import { getQueueStatus } from '../api';
 import useWorkerStatus from '../hooks/useWorkerStatus';
 
-function StatCard({ label, value, mono }) {
-  return (
-    <div className="glass rounded-xl p-5 text-center">
-      <div className={`text-2xl font-semibold ${mono ? 'font-mono' : ''}`}>{value}</div>
-      <div className="text-xs text-gray-500 mt-1">{label}</div>
-    </div>
-  );
-}
+const STATUS_COLORS = {
+  pending: 'bg-[var(--color-warning)]',
+  processing: 'bg-[var(--color-accent)]',
+  complete: 'bg-[var(--color-success)]',
+  failed: 'bg-[var(--color-danger)]',
+  assigned: 'bg-[var(--color-accent)]',
+  expired: 'bg-[var(--color-muted-2)]',
+};
 
 export default function QueuePage() {
   const worker = useWorkerStatus(10000);
   const [queue, setQueue] = useState(null);
 
   useEffect(() => {
-    const fetch = () => getQueueStatus().then((d) => setQueue(d.queue)).catch(() => {});
-    fetch();
-    const id = setInterval(fetch, 10000);
+    const poll = () => getQueueStatus().then((d) => setQueue(d.queue)).catch(() => {});
+    poll();
+    const id = setInterval(poll, 10000);
     return () => clearInterval(id);
   }, []);
 
   const workerOnline = worker?.worker_connected;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 space-y-8 page-enter">
-      <div>
-        <h1 className="text-2xl font-bold">Queue Status</h1>
-        <p className="text-sm text-gray-500 mt-1">Live system status</p>
-      </div>
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 page-enter">
+      <div className="w-full max-w-sm">
+        <h2 className="text-xl font-bold text-center mb-8">System Status</h2>
 
-      {/* Worker status */}
-      <div className="glass rounded-xl p-6">
-        <div className="flex items-center gap-3">
-          <span className={`w-3 h-3 rounded-full ${
-            workerOnline === true ? 'bg-emerald-500 animate-pulse' :
-            workerOnline === false ? 'bg-red-500' : 'bg-gray-600'
-          }`} />
-          <div>
-            <p className="font-medium">
-              {workerOnline === true ? 'GPU Worker Online' :
-               workerOnline === false ? 'GPU Worker Offline' : 'Checking...'}
-            </p>
-            {worker?.paused && (
-              <p className="text-xs text-yellow-500 mt-0.5">Worker is paused</p>
-            )}
+        {/* Worker card */}
+        <div className="glass-strong rounded-2xl p-6 mb-4">
+          <div className="flex items-center gap-4">
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+              workerOnline
+                ? 'bg-[var(--color-success)]/10'
+                : workerOnline === false
+                  ? 'bg-[var(--color-danger)]/10'
+                  : 'bg-[var(--color-surface-3)]'
+            }`}>
+              <div className={`w-3 h-3 rounded-full ${
+                workerOnline
+                  ? 'bg-[var(--color-success)] fade-pulse'
+                  : workerOnline === false
+                    ? 'bg-[var(--color-danger)]'
+                    : 'bg-[var(--color-muted-2)]'
+              }`} />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium">GPU Worker</p>
+              <p className="text-xs text-[var(--color-muted)] font-mono">RTX 5070 Ti</p>
+            </div>
+            <span className={`text-xs font-mono ${
+              workerOnline
+                ? 'text-[var(--color-success)]'
+                : workerOnline === false
+                  ? 'text-[var(--color-danger)]'
+                  : 'text-[var(--color-muted-2)]'
+            }`}>
+              {workerOnline ? 'Online' : workerOnline === false ? 'Offline' : 'Checking...'}
+            </span>
           </div>
+          {worker?.paused && (
+            <p className="text-xs text-[var(--color-warning)] mt-3 ml-16">Worker is paused</p>
+          )}
         </div>
+
+        {/* Queue stats */}
+        {queue && (
+          <div className="glass-strong rounded-2xl p-6">
+            <div className="space-y-4">
+              {['pending', 'processing', 'complete', 'failed', 'assigned', 'expired'].map((key) => (
+                <div key={key} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${STATUS_COLORS[key]}`} />
+                    <span className="text-sm text-[var(--color-muted)] capitalize">{key}</span>
+                  </div>
+                  <span className="text-sm font-mono font-semibold">{queue[key] || 0}</span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-6 pt-4 border-t border-[var(--color-border)]">
+              <p className="text-xs text-[var(--color-muted-2)] text-center font-mono">
+                Refreshes every 10 seconds
+              </p>
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* Queue counts */}
-      {queue && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          <StatCard label="Pending" value={queue.pending || 0} mono />
-          <StatCard label="Processing" value={queue.processing || 0} mono />
-          <StatCard label="Completed" value={queue.complete || 0} mono />
-          <StatCard label="Failed" value={queue.failed || 0} mono />
-          <StatCard label="Assigned" value={queue.assigned || 0} mono />
-          <StatCard label="Expired" value={queue.expired || 0} mono />
-        </div>
-      )}
-
-      <p className="text-xs text-gray-600 text-center">
-        Jobs expire after 72 hours. Queue refreshes every 10 seconds.
-      </p>
     </div>
   );
 }

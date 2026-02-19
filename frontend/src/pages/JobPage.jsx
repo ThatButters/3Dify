@@ -38,10 +38,10 @@ export default function JobPage() {
 
   if (pollError) {
     return (
-      <div className="min-h-[calc(100vh-3.5rem)] flex items-center justify-center px-4">
+      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4">
         <div className="text-center space-y-4 page-enter">
-          <p className="text-red-400">{pollError}</p>
-          <Link to="/" className="inline-block text-sm text-gray-400 hover:text-white transition-colors">
+          <p className="text-[var(--color-danger)]">{pollError}</p>
+          <Link to="/" className="inline-block text-sm text-[var(--color-muted)] hover:text-white transition-colors">
             Back to home
           </Link>
         </div>
@@ -50,35 +50,35 @@ export default function JobPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-3.5rem)] flex items-center justify-center px-4 py-8">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-8">
       {isComplete && job ? (
         <ResultsView job={job} />
       ) : isFailed ? (
         <div className="w-full max-w-lg mx-auto text-center space-y-6 page-enter">
-          <div className="glass rounded-xl p-8 space-y-4">
-            <div className="mx-auto w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
-              <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="glass-strong rounded-2xl p-8 space-y-4">
+            <div className="mx-auto w-12 h-12 rounded-full bg-[var(--color-danger)]/10 flex items-center justify-center">
+              <svg className="w-6 h-6 text-[var(--color-danger)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
             <div>
               <h2 className="text-lg font-semibold">Generation Failed</h2>
-              <p className="text-sm text-gray-400 mt-1">
+              <p className="text-sm text-[var(--color-muted)] mt-1">
                 {wsError?.message || job?.error || 'An unexpected error occurred'}
               </p>
               {(wsError?.step || job?.error_step) && (
-                <p className="text-xs text-gray-600 mt-1 font-mono">
+                <p className="text-xs text-[var(--color-muted-2)] mt-1 font-mono">
                   Failed at: {wsError?.step || job?.error_step}
                 </p>
               )}
             </div>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-[var(--color-muted-2)]">
               Try again — the GPU may have been busy or the image format unsupported.
             </p>
           </div>
           <Link
             to="/"
-            className="inline-block px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-sm font-medium transition-colors"
+            className="inline-block px-6 py-2.5 rounded-xl btn-accent text-sm font-medium"
           >
             Try again
           </Link>

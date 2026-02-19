@@ -8,10 +8,10 @@ export default function GalleryCard({ item, onClick }) {
   return (
     <>
       <div
-        className="glass rounded-xl overflow-hidden cursor-pointer hover:border-gray-500 transition-all group"
+        className="glass rounded-xl overflow-hidden cursor-pointer hover:border-[var(--color-accent)]/20 transition-all group"
         onClick={onClick}
       >
-        <div className="aspect-square bg-white/5 flex items-center justify-center overflow-hidden">
+        <div className="aspect-square bg-[var(--color-surface-2)] flex items-center justify-center overflow-hidden">
           {item.thumbnail_url ? (
             <img
               src={getThumbnailUrl(item.job_id)}
@@ -24,20 +24,20 @@ export default function GalleryCard({ item, onClick }) {
         </div>
         <div className="p-3 space-y-1">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-mono text-gray-400">
+            <span className="text-xs font-mono text-[var(--color-muted)]">
               {item.vertex_count?.toLocaleString()}v
             </span>
-            <span className="text-xs font-mono text-gray-500">
+            <span className="text-xs font-mono text-[var(--color-muted-2)]">
               {item.generation_time_s?.toFixed(0)}s
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-600">
+            <span className="text-[10px] text-[var(--color-muted-2)]">
               {item.completed_at ? new Date(item.completed_at).toLocaleDateString() : ''}
             </span>
             <button
               onClick={(e) => { e.stopPropagation(); setShowReport(true); }}
-              className="text-gray-700 hover:text-gray-400 transition-colors"
+              className="text-[var(--color-muted-2)] opacity-0 group-hover:opacity-100 hover:text-[var(--color-muted)] transition-all"
               title="Report"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

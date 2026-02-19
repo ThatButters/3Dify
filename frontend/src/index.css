@@ -1,36 +1,96 @@
 @import "tailwindcss";
 
 @theme {
-  --color-surface: #111111;
-  --color-surface-2: #1a1a1a;
-  --color-border: #262626;
-  --color-accent: #3b82f6;
-  --color-accent-hover: #2563eb;
+  --color-bg: #0a0a0a;
+  --color-surface: #0f0f0f;
+  --color-surface-2: #141414;
+  --color-surface-3: #1a1a1a;
+  --color-border: #1c1c1c;
+  --color-border-2: #282828;
+  --color-accent: #e97316;
+  --color-accent-2: #c2410c;
+  --color-muted: #737373;
+  --color-muted-2: #525252;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #0a0a0a;
+  color: #e5e5e5;
+  font-family: 'Inter', system-ui, sans-serif;
 }
 
 .font-mono {
   font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
 }
 
-/* Glass panel */
+/* Glass panels */
 .glass {
-  background: rgba(17, 17, 17, 0.8);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--color-border);
+  background: rgba(15, 15, 15, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-strong {
+  background: rgba(20, 20, 20, 0.9);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* Accent glow effects */
+.glow-accent {
+  box-shadow: 0 0 40px rgba(233, 115, 22, 0.15), 0 0 80px rgba(233, 115, 22, 0.05);
+}
+
+.glow-accent-sm {
+  box-shadow: 0 0 20px rgba(233, 115, 22, 0.1);
+}
+
+/* Gradient button */
+.btn-accent {
+  background: linear-gradient(to right, var(--color-accent), var(--color-accent-2));
+  color: white;
+}
+
+.btn-accent:hover {
+  opacity: 0.9;
+}
+
+/* Gradient text */
+.text-gradient {
+  background: linear-gradient(to right, var(--color-accent), var(--color-accent-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Animations */
+@keyframes gradient-x {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-x 3s ease infinite;
+}
+
+@keyframes fade-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.fade-pulse {
+  animation: fade-pulse 2s ease-in-out infinite;
 }
 
 /* Progress bar animation */
-@keyframes progress-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
-}
-
 .progress-active {
-  animation: progress-pulse 2s ease-in-out infinite;
+  animation: fade-pulse 2s ease-in-out infinite;
 }
 
 /* model-viewer styling */

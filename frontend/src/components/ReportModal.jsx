@@ -33,14 +33,14 @@ export default function ReportModal({ jobId, onClose }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
       <div
-        className="relative glass rounded-xl p-6 w-full max-w-md page-enter"
+        className="relative glass-strong rounded-2xl p-6 w-full max-w-md page-enter"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-lg font-semibold mb-4">Report this content</h2>
 
         {done ? (
           <div className="space-y-4">
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-[var(--color-muted)]">
               Thanks for reporting. We'll review this.
             </p>
             <button
@@ -53,12 +53,12 @@ export default function ReportModal({ jobId, onClose }) {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1.5">Reason</label>
+              <label className="block text-sm text-[var(--color-muted)] mb-1.5">Reason</label>
               <select
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 required
-                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-[var(--color-border)] text-sm focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-[var(--color-border)] text-sm focus:outline-none focus:border-[var(--color-accent)]"
               >
                 <option value="">Select a reason...</option>
                 {REASONS.map((r) => (
@@ -68,17 +68,17 @@ export default function ReportModal({ jobId, onClose }) {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-1.5">Details (optional)</label>
+              <label className="block text-sm text-[var(--color-muted)] mb-1.5">Details (optional)</label>
               <textarea
                 value={details}
                 onChange={(e) => setDetails(e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-[var(--color-border)] text-sm resize-none focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 rounded-lg bg-white/5 border border-[var(--color-border)] text-sm resize-none focus:outline-none focus:border-[var(--color-accent)]"
                 placeholder="Any additional context..."
               />
             </div>
 
-            {error && <p className="text-sm text-red-400">{error}</p>}
+            {error && <p className="text-sm text-[var(--color-danger)]">{error}</p>}
 
             <div className="flex gap-3">
               <button
@@ -91,7 +91,7 @@ export default function ReportModal({ jobId, onClose }) {
               <button
                 type="submit"
                 disabled={submitting || !reason}
-                className="flex-1 py-2 rounded-lg bg-red-600 hover:bg-red-700 disabled:opacity-50 text-sm font-medium transition-colors"
+                className="flex-1 py-2 rounded-lg bg-[var(--color-danger)] hover:opacity-90 disabled:opacity-50 text-sm font-medium transition-colors"
               >
                 {submitting ? 'Submitting...' : 'Report'}
               </button>

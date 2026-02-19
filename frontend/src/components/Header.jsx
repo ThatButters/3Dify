@@ -1,28 +1,66 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import WorkerStatusBadge from './WorkerStatusBadge';
 
 export default function Header() {
+  const { pathname } = useLocation();
+
+  const navItems = [
+    { to: '/', label: 'Upload' },
+    { to: '/gallery', label: 'Gallery' },
+    { to: '/queue', label: 'Queue' },
+  ];
+
   return (
-    <header className="sticky top-0 z-50 glass">
-      <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-        <Link to="/" className="text-lg font-bold tracking-tight hover:opacity-80 transition-opacity">
-          3Dify
-        </Link>
-        <nav className="flex items-center gap-6 text-sm text-gray-400">
-          <Link to="/" className="hover:text-white transition-colors">Home</Link>
-          <Link to="/gallery" className="hover:text-white transition-colors">Gallery</Link>
-          <Link to="/queue" className="hover:text-white transition-colors">Queue</Link>
+    <header className="sticky top-0 z-50 glass-strong" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between">
+        <div className="flex items-center gap-8">
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <div className="w-7 h-7 rounded-lg btn-accent flex items-center justify-center">
+              <span className="text-white text-xs font-bold">3D</span>
+            </div>
+            <span className="text-base font-bold tracking-tight">3Dify</span>
+          </Link>
+
+          {/* Nav */}
+          <nav className="hidden sm:flex items-center gap-1 text-sm">
+            {navItems.map(({ to, label }) => {
+              const active = to === '/' ? pathname === '/' : pathname.startsWith(to);
+              return (
+                <Link
+                  key={to}
+                  to={to}
+                  className={`relative px-3 py-4 transition-colors ${
+                    active ? 'text-white' : 'text-[var(--color-muted)] hover:text-white'
+                  }`}
+                >
+                  {label}
+                  {active && (
+                    <span
+                      className="absolute bottom-0 left-0 right-0 h-0.5 rounded-sm"
+                      style={{ background: 'linear-gradient(90deg, var(--color-accent), var(--color-accent-2))' }}
+                    />
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <WorkerStatusBadge />
           <a
             href="https://github.com/ThatButters/3Dify"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-white transition-colors"
+            className="text-[var(--color-muted-2)] hover:text-white transition-colors"
             aria-label="GitHub"
           >
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
               <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
             </svg>
           </a>
-        </nav>
+        </div>
       </div>
     </header>
   );

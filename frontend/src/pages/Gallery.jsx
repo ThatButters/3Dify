@@ -16,15 +16,18 @@ export default function Gallery() {
   }, []);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 page-enter">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold">Gallery</h1>
-        <p className="text-sm text-gray-500 mt-1">Community models rated 4+ stars</p>
+    <div className="max-w-7xl mx-auto px-4 py-8 page-enter">
+      <div className="flex items-end justify-between mb-8">
+        <div>
+          <h1 className="text-2xl font-bold">Gallery</h1>
+          <p className="text-sm text-[var(--color-muted)] mt-1">Community creations</p>
+        </div>
+        <div className="text-xs font-mono text-[var(--color-muted-2)]">{items.length} models</div>
       </div>
 
       {loading ? (
         <div className="flex justify-center py-20">
-          <svg className="w-6 h-6 text-gray-600 animate-spin" fill="none" viewBox="0 0 24 24">
+          <svg className="w-6 h-6 text-[var(--color-accent)] animate-spin" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
@@ -32,11 +35,11 @@ export default function Gallery() {
       ) : items.length === 0 ? (
         <div className="text-center py-20">
           <span className="text-4xl">🧊</span>
-          <p className="text-gray-500 mt-3">No models in the gallery yet.</p>
-          <p className="text-sm text-gray-600 mt-1">Upload a photo and rate it 4+ stars to add it here!</p>
+          <p className="text-[var(--color-muted)] mt-3">No models in the gallery yet.</p>
+          <p className="text-sm text-[var(--color-muted-2)] mt-1">Upload a photo and rate it 4+ stars to add it here!</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
           {items.map((item) => (
             <GalleryCard
               key={item.job_id}
@@ -52,7 +55,7 @@ export default function Gallery() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setSelected(null)}>
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
           <div
-            className="relative glass rounded-xl p-6 w-full max-w-2xl space-y-4 page-enter"
+            className="relative glass-strong rounded-2xl p-6 w-full max-w-2xl space-y-4 page-enter"
             onClick={(e) => e.stopPropagation()}
           >
             <ModelViewer glbUrl={getGlbUrl(selected.job_id)} />
@@ -60,14 +63,14 @@ export default function Gallery() {
               <a
                 href={getStlUrl(selected.job_id)}
                 download
-                className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-center text-sm font-medium transition-colors"
+                className="flex-1 py-2.5 rounded-xl btn-accent text-center text-sm font-medium"
               >
                 Download STL
               </a>
               <a
                 href={getGlbUrl(selected.job_id)}
                 download
-                className="flex-1 py-2.5 rounded-xl bg-white/5 border border-[var(--color-border)] hover:bg-white/10 text-center text-sm font-medium transition-colors"
+                className="flex-1 py-2.5 rounded-xl glass-strong hover:bg-[var(--color-surface-3)] text-center text-sm font-medium text-[var(--color-muted)] hover:text-white transition-colors"
               >
                 Download GLB
               </a>
@@ -76,7 +79,7 @@ export default function Gallery() {
               onClick={() => setSelected(null)}
               className="absolute top-3 right-3 p-1.5 rounded-lg hover:bg-white/10 transition-colors"
             >
-              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-[var(--color-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
