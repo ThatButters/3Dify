@@ -28,6 +28,10 @@ export default function ResultsView({ job }) {
           <ModelViewer glbUrl={getGlbUrl(job.job_id)} />
         </div>
 
+        <p className="text-xs text-[var(--color-muted-2)] text-center mt-2 italic lg:col-span-2">
+          If it looks wrong, that's the AI's fault. If it looks right, you're welcome.
+        </p>
+
         {/* Sidebar */}
         <div className="space-y-4">
           {/* Stats */}

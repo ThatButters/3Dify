@@ -70,6 +70,7 @@ export default function Home() {
 
       <footer className="py-6 text-center border-t border-[var(--color-border)] space-y-1">
         <p className="text-xs text-[var(--color-muted-2)]">20 free uploads per day per IP</p>
+        <p className="text-xs text-[var(--color-muted-2)] italic">Free forever, or until the electricity bill gets weird.</p>
         <a
           href="https://github.com/ThatButters/3Dify"
           target="_blank"
