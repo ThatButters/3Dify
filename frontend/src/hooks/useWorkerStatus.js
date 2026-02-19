@@ -10,9 +10,9 @@ export default function useWorkerStatus(intervalMs = 30000) {
     async function poll() {
       try {
         const data = await getHealth();
-        if (active) setStatus(data);
+        if (active) setStatus({ ...data, lastSeen: new Date() });
       } catch {
-        if (active) setStatus(null);
+        if (active) setStatus((prev) => prev ? { ...prev, worker_connected: false } : null);
       }
     }
 

@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UploadZone from '../components/UploadZone';
+import { useToast } from '../components/Toast';
 import { uploadImage, getQueueStatus } from '../api';
 
 export default function Home() {
   const navigate = useNavigate();
+  const toast = useToast();
   const [queueDepth, setQueueDepth] = useState(null);
 
   useEffect(() => {
@@ -17,9 +19,15 @@ export default function Home() {
   }, []);
 
   const handleUpload = async (file) => {
-    const result = await uploadImage(file);
-    localStorage.setItem('lastJobId', result.job_id);
-    navigate(`/job/${result.job_id}`);
+    try {
+      const result = await uploadImage(file);
+      localStorage.setItem('lastJobId', result.job_id);
+      toast.success('Upload complete — generating your model...');
+      navigate(`/job/${result.job_id}`);
+    } catch (err) {
+      toast.error(err.message || 'Upload failed');
+      throw err; // Re-throw so UploadZone can reset its state
+    }
   };
 
   return (

@@ -1,19 +1,41 @@
 import { useEffect, useState } from 'react';
 import GalleryCard from '../components/GalleryCard';
 import ModelViewer from '../components/ModelViewer';
+import { useToast } from '../components/Toast';
 import { getGallery, getGlbUrl, getStlUrl } from '../api';
+
+const PAGE_SIZE = 20;
 
 export default function Gallery() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const [selected, setSelected] = useState(null);
+  const toast = useToast();
 
   useEffect(() => {
-    getGallery(20, 0)
-      .then(setItems)
-      .catch(() => {})
+    getGallery(PAGE_SIZE, 0)
+      .then((data) => {
+        setItems(data);
+        setHasMore(data.length >= PAGE_SIZE);
+      })
+      .catch(() => toast.error('Failed to load gallery'))
       .finally(() => setLoading(false));
   }, []);
+
+  const loadMore = async () => {
+    setLoadingMore(true);
+    try {
+      const data = await getGallery(PAGE_SIZE, items.length);
+      setItems((prev) => [...prev, ...data]);
+      setHasMore(data.length >= PAGE_SIZE);
+    } catch {
+      toast.error('Failed to load more models');
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 page-enter">
@@ -39,15 +61,40 @@ export default function Gallery() {
           <p className="text-sm text-[var(--color-muted-2)] mt-1">Upload a photo and rate it 4+ stars to add it here!</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-          {items.map((item) => (
-            <GalleryCard
-              key={item.job_id}
-              item={item}
-              onClick={() => setSelected(item)}
-            />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {items.map((item) => (
+              <GalleryCard
+                key={item.job_id}
+                item={item}
+                onClick={() => setSelected(item)}
+              />
+            ))}
+          </div>
+
+          {/* Load more */}
+          {hasMore && (
+            <div className="flex justify-center mt-8">
+              <button
+                onClick={loadMore}
+                disabled={loadingMore}
+                className="px-6 py-2.5 glass-strong rounded-xl text-sm font-medium text-[var(--color-muted)] hover:text-white transition-colors disabled:opacity-50"
+              >
+                {loadingMore ? (
+                  <span className="flex items-center gap-2">
+                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Loading...
+                  </span>
+                ) : (
+                  'Load more'
+                )}
+              </button>
+            </div>
+          )}
+        </>
       )}
 
       {/* Detail modal */}

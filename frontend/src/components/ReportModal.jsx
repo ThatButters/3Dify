@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { submitReport } from '../api';
+import { useToast } from './Toast';
 
 const REASONS = [
   'Inappropriate / NSFW',
@@ -13,6 +14,7 @@ export default function ReportModal({ jobId, onClose }) {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState(null);
+  const toast = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,8 +24,10 @@ export default function ReportModal({ jobId, onClose }) {
     try {
       await submitReport(jobId, reason, details);
       setDone(true);
+      toast.success('Report submitted — thanks for helping keep 3Dify safe.');
     } catch (err) {
       setError(err.message);
+      toast.error('Failed to submit report');
     } finally {
       setSubmitting(false);
     }

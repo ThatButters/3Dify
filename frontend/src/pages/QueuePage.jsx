@@ -11,9 +11,19 @@ const STATUS_COLORS = {
   expired: 'bg-[var(--color-muted-2)]',
 };
 
+function formatLastSeen(date) {
+  if (!date) return null;
+  const seconds = Math.round((Date.now() - date.getTime()) / 1000);
+  if (seconds < 5) return 'just now';
+  if (seconds < 60) return `${seconds}s ago`;
+  const minutes = Math.round(seconds / 60);
+  return `${minutes}m ago`;
+}
+
 export default function QueuePage() {
   const worker = useWorkerStatus(10000);
   const [queue, setQueue] = useState(null);
+  const [, setTick] = useState(0);
 
   useEffect(() => {
     const poll = () => getQueueStatus().then((d) => setQueue(d.queue)).catch(() => {});
@@ -22,7 +32,14 @@ export default function QueuePage() {
     return () => clearInterval(id);
   }, []);
 
+  // Tick every 5s to update the "last seen" relative time
+  useEffect(() => {
+    const id = setInterval(() => setTick((t) => t + 1), 5000);
+    return () => clearInterval(id);
+  }, []);
+
   const workerOnline = worker?.worker_connected;
+  const lastSeen = worker?.lastSeen;
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 page-enter">
@@ -51,15 +68,22 @@ export default function QueuePage() {
               <p className="text-sm font-medium">GPU Worker</p>
               <p className="text-xs text-[var(--color-muted)] font-mono">RTX 5070 Ti</p>
             </div>
-            <span className={`text-xs font-mono ${
-              workerOnline
-                ? 'text-[var(--color-success)]'
-                : workerOnline === false
-                  ? 'text-[var(--color-danger)]'
-                  : 'text-[var(--color-muted-2)]'
-            }`}>
-              {workerOnline ? 'Online' : workerOnline === false ? 'Offline' : 'Checking...'}
-            </span>
+            <div className="text-right">
+              <span className={`text-xs font-mono ${
+                workerOnline
+                  ? 'text-[var(--color-success)]'
+                  : workerOnline === false
+                    ? 'text-[var(--color-danger)]'
+                    : 'text-[var(--color-muted-2)]'
+              }`}>
+                {workerOnline ? 'Online' : workerOnline === false ? 'Offline' : 'Checking...'}
+              </span>
+              {lastSeen && (
+                <p className="text-[10px] text-[var(--color-muted-2)] font-mono mt-0.5">
+                  Last seen {formatLastSeen(lastSeen)}
+                </p>
+              )}
+            </div>
           </div>
           {worker?.paused && (
             <p className="text-xs text-[var(--color-warning)] mt-3 ml-16">Worker is paused</p>
@@ -80,9 +104,12 @@ export default function QueuePage() {
                 </div>
               ))}
             </div>
-            <div className="mt-6 pt-4 border-t border-[var(--color-border)]">
-              <p className="text-xs text-[var(--color-muted-2)] text-center font-mono">
-                Refreshes every 10 seconds
+            <div className="mt-6 pt-4 border-t border-[var(--color-border)] space-y-1">
+              <p className="text-xs text-[var(--color-muted-2)] text-center">
+                Jobs expire after 72 hours
+              </p>
+              <p className="text-xs text-[var(--color-muted-2)] text-center font-mono opacity-60">
+                Refreshes every 10s
               </p>
             </div>
           </div>

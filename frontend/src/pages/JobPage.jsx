@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import useJobWebSocket from '../hooks/useJobWebSocket';
 import ProgressView from '../components/ProgressView';
 import ResultsView from '../components/ResultsView';
+import { useToast } from '../components/Toast';
 import { getJob } from '../api';
 
 export default function JobPage() {
@@ -10,13 +11,17 @@ export default function JobPage() {
   const { progress, result, error: wsError } = useJobWebSocket(jobId);
   const [job, setJob] = useState(null);
   const [pollError, setPollError] = useState(null);
+  const toast = useToast();
 
   // Fetch initial job state
   useEffect(() => {
     if (!jobId) return;
     getJob(jobId)
       .then(setJob)
-      .catch((err) => setPollError(err.message));
+      .catch((err) => {
+        setPollError(err.message);
+        toast.error(err.message);
+      });
   }, [jobId]);
 
   // When WS reports complete, re-fetch the full job data
