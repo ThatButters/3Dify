@@ -1,0 +1,16 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      - UPLOAD_DIR=/data/uploads
+      - OUTPUT_DIR=/data/outputs
+    volumes:
+      - ptp-data:/data
+    restart: unless-stopped
+
+volumes:
+  ptp-data:

@@ -1,0 +1,39 @@
+# Upstream repo (submodule or separate)
+Hunyuan3D-2.1/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+*.egg-info/
+
+# Test outputs & data
+*.stl
+*.glb
+*.gif
+*.jpg
+*.jpeg
+*.png
+test_batch/
+test_shape.py
+
+# Secrets — never commit .env files
+.env
+
+# Server runtime
+server/ptp.db
+server/uploads/
+server/outputs/
+server/.venv/
+
+# Worker runtime
+worker/logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
