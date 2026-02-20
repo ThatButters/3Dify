@@ -73,7 +73,7 @@ function start() {
     `conda activate '${CONDA_ENV}' && ` +
     `cd '${WORKER_DIR}' && ` +
     `set -a && [ -f .env ] && source .env && set +a && ` +
-    `exec python worker.py --preload`;
+    `exec python worker.py`;
 
   workerProcess = spawn('wsl', ['-d', WSL_DISTRO, '--', 'bash', '-c', bashCmd], {
     stdio: ['ignore', 'pipe', 'pipe'],

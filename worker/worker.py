@@ -79,6 +79,7 @@ class Worker:
             logger.info("Pre-loading pipeline...")
             import pipeline
             await loop.run_in_executor(None, pipeline.load_model)
+            self.last_job_finished = time.time()  # allow idle unload if no jobs arrive
 
         while not self.should_stop:
             try:

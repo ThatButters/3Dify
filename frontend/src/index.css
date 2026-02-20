@@ -2,18 +2,24 @@
 
 @theme {
   --color-bg: #0a0a0a;
-  --color-surface: #0f0f0f;
-  --color-surface-2: #141414;
-  --color-surface-3: #1a1a1a;
-  --color-border: #1c1c1c;
-  --color-border-2: #282828;
+  --color-surface: #141414;
+  --color-surface-2: #1a1a1a;
+  --color-surface-3: #222222;
+  --color-border: #2a2a2a;
+  --color-border-2: #363636;
   --color-accent: #e97316;
   --color-accent-2: #c2410c;
-  --color-muted: #737373;
-  --color-muted-2: #525252;
+  --color-muted: #a3a3a3;
+  --color-muted-2: #858585;
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-danger: #ef4444;
+}
+
+html {
+  /* Bump base from browser default 16px to 18px — scales all rem-based
+     Tailwind utilities (text-sm, text-xs, etc.) up proportionally */
+  font-size: 18px;
 }
 
 body {
