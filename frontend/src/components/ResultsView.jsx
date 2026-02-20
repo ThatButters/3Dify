@@ -87,22 +87,22 @@ export default function ResultsView({ job }) {
           <StarRating onSubmit={handleFeedback} />
         </div>
 
-        <div className="flex items-center justify-between">
-          <button
-            onClick={() => setShowReport(true)}
-            className="text-xs text-[var(--color-muted-2)] hover:text-[var(--color-muted)] transition-colors"
-          >
-            Report issue
-          </button>
+        <div className="flex flex-col items-center gap-3">
           <Link
             to="/"
-            className="text-sm text-[var(--color-accent)] hover:text-white transition-colors flex items-center gap-1.5"
+            className="py-3.5 px-8 btn-accent text-sm font-semibold rounded-xl glow-accent-sm inline-flex items-center gap-2"
           >
             Convert another photo
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>
           </Link>
+          <button
+            onClick={() => setShowReport(true)}
+            className="text-xs text-[var(--color-muted-2)] hover:text-[var(--color-muted)] transition-colors"
+          >
+            Report issue
+          </button>
         </div>
       </div>
 

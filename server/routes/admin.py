@@ -1,5 +1,5 @@
 import hmac
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Header, Request
 from pydantic import BaseModel
@@ -21,6 +21,21 @@ def _verify_admin(authorization: str = Header(...)):
     expected = f"Bearer {settings.admin_auth_token}"
     if not hmac.compare_digest(authorization, expected):
         raise HTTPException(401, "Invalid admin token")
+
+
+# ─── Login (no auth required) ────────────────────────────────
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+
+@router.post("/login")
+async def admin_login(body: LoginRequest):
+    if (hmac.compare_digest(body.username, settings.admin_username)
+            and hmac.compare_digest(body.password, settings.admin_password)):
+        return {"token": settings.admin_auth_token}
+    raise HTTPException(401, "Invalid credentials")
 
 
 def _get_bridge(request: Request) -> WorkerBridge:
@@ -155,7 +170,7 @@ async def audit_log(
 
 @router.get("/stats", dependencies=[Depends(_verify_admin)])
 async def stats(session: AsyncSession = Depends(get_session)):
-    now = datetime.now(timezone.utc)
+    now = datetime.utcnow()
 
     # Jobs in last 24h
     cutoff_24h = now - timedelta(hours=24)

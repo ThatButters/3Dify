@@ -52,6 +52,37 @@ export default function Home() {
         {/* Upload */}
         <UploadZone onUpload={handleUpload} />
 
+        {/* Tips */}
+        <div className="mt-10 max-w-md mx-auto glass-strong rounded-2xl p-6">
+          <h3 className="text-xs text-[var(--color-muted)] uppercase tracking-widest mb-3 font-medium text-center">
+            Garbage in, garbage out
+          </h3>
+          <p className="text-sm text-[var(--color-muted)] text-center mb-4">
+            The AI is clever, not psychic. Help it help you:
+          </p>
+          <ul className="space-y-2 text-sm text-[var(--color-muted)]">
+            <li className="flex items-start gap-2">
+              <span className="text-[var(--color-success)] mt-0.5">&#10003;</span>
+              <span>One subject, front-facing, centered in frame</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-[var(--color-success)] mt-0.5">&#10003;</span>
+              <span>Clean background (or we'll remove it for you)</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-[var(--color-success)] mt-0.5">&#10003;</span>
+              <span>Good lighting — no harsh shadows or silhouettes</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-[var(--color-warning)] mt-0.5">&#10007;</span>
+              <span>Group photos, blurry shots, or artistic angles</span>
+            </li>
+          </ul>
+          <p className="text-xs text-[var(--color-muted-2)] text-center mt-4 italic">
+            Think "passport photo energy" — boring is beautiful here.
+          </p>
+        </div>
+
         {/* Stats footer */}
         <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-[var(--color-muted-2)] font-mono">
           <span>~3 min generation</span>

@@ -24,6 +24,8 @@ class Settings(BaseSettings):
     # Auth — no defaults; generates random tokens if unset (safe but ephemeral)
     worker_auth_token: str = ""
     admin_auth_token: str = ""
+    admin_username: str = "admin"
+    admin_password: str = ""
 
     # File storage
     upload_dir: str = "uploads"
@@ -55,6 +57,8 @@ class Settings(BaseSettings):
             self.worker_auth_token = _require_token("WORKER_AUTH_TOKEN")
         if not self.admin_auth_token:
             self.admin_auth_token = _require_token("ADMIN_AUTH_TOKEN")
+        if not self.admin_password:
+            self.admin_password = _require_token("ADMIN_PASSWORD")
 
 
 settings = Settings()
