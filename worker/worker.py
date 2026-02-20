@@ -65,6 +65,7 @@ class Worker:
         self.should_stop = False
         self.reconnect_delay = config.RECONNECT_BASE_S
         self.force_next = False  # skip GPU check for next job
+        self.last_job_finished = None  # timestamp for idle unload
 
         os.makedirs(config.TEMP_DIR, exist_ok=True)
 
@@ -128,8 +129,9 @@ class Worker:
                 "worker_version": config.WORKER_VERSION,
             })
 
-            # Start heartbeat in background
+            # Start heartbeat and idle unloader in background
             heartbeat = asyncio.create_task(self._heartbeat_loop())
+            idle_unloader = asyncio.create_task(self._idle_unload_loop())
 
             try:
                 async for raw in ws:
@@ -140,10 +142,12 @@ class Worker:
                         break
             finally:
                 heartbeat.cancel()
-                try:
-                    await heartbeat
-                except asyncio.CancelledError:
-                    pass
+                idle_unloader.cancel()
+                for task in (heartbeat, idle_unloader):
+                    try:
+                        await task
+                    except asyncio.CancelledError:
+                        pass
 
             # Graceful bye
             if self.should_stop:
@@ -220,6 +224,7 @@ class Worker:
             })
         finally:
             self.current_job_id = None
+            self.last_job_finished = time.time()
 
     async def _process_job(self, msg: dict):
         import pipeline  # deferred import to avoid loading torch at startup
@@ -344,6 +349,20 @@ class Worker:
                 logger.warning("Send failed — connection closed")
             except Exception as e:
                 logger.warning(f"Send failed: {e}")
+
+    async def _idle_unload_loop(self):
+        """Unload model from VRAM after idle timeout to free memory."""
+        while True:
+            await asyncio.sleep(60)  # check every minute
+            if (self.last_job_finished
+                    and not self.current_job_id
+                    and time.time() - self.last_job_finished > config.MODEL_IDLE_TIMEOUT_S):
+                import pipeline
+                if pipeline.is_model_loaded():
+                    logger.info(f"Idle for {config.MODEL_IDLE_TIMEOUT_S}s — unloading model from VRAM")
+                    loop = asyncio.get_running_loop()
+                    await loop.run_in_executor(None, pipeline.unload_model)
+                    self.last_job_finished = None  # reset so we don't keep trying
 
     async def _heartbeat_loop(self):
         """Send GPU status every HEARTBEAT_INTERVAL_S seconds."""

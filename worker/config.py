@@ -16,7 +16,7 @@ VPS_WS_URL = os.environ.get("VPS_WS_URL", "ws://localhost:8080/ws/worker")
 AUTH_TOKEN = os.environ.get("WORKER_AUTH_TOKEN", "")
 
 # GPU thresholds
-MIN_FREE_VRAM_GB = 10.0       # Enough to load + run Hunyuan3D
+MIN_FREE_VRAM_GB = 4.0        # Enough to load + run Hunyuan3D (model uses ~8GB, WSL reserves some)
 MIN_FREE_VRAM_GB_LOADED = 2.0 # When pipeline already in VRAM, just need headroom
 MAX_GPU_UTIL_PCT = 15          # Catches gaming, video editing, etc.
 GPU_POLL_INTERVAL_S = 30
@@ -33,6 +33,9 @@ DEFAULT_SEED = 42
 
 # WebSocket
 WS_MAX_SIZE = 100 * 1024 * 1024  # 100MB — STLs can be 30-50MB, base64 adds ~33%
+
+# Model lifecycle
+MODEL_IDLE_TIMEOUT_S = 300  # Unload model from VRAM after 5 min idle
 
 # Worker
 WORKER_VERSION = "1.0.0"
