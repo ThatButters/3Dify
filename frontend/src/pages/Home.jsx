@@ -99,6 +99,36 @@ export default function Home() {
         </div>
       </div>
 
+      {/* About */}
+      <div className="max-w-3xl mx-auto px-4 py-12">
+        <div className="glass-strong rounded-2xl p-8 space-y-6">
+          <h2 className="text-lg font-semibold text-center">What is this?</h2>
+          <p className="text-sm text-[var(--color-muted)] leading-relaxed text-center max-w-xl mx-auto">
+            3Dify turns photos into 3D-printable STL files using <a href="https://github.com/Tencent/Hunyuan3D-2" target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:text-white transition-colors">Hunyuan3D 2.1</a>, an open-source AI model by Tencent. Upload a picture of anything — your dog, your face, a weird thing you found at the thrift store — and get back a high-detail mesh ready for your 3D printer.
+          </p>
+          <div className="grid sm:grid-cols-3 gap-4 text-center">
+            <div className="p-4 rounded-xl bg-[var(--color-surface-2)]">
+              <p className="text-2xl font-bold text-gradient mb-1">1.</p>
+              <p className="text-sm text-[var(--color-muted)]">Upload a photo</p>
+              <p className="text-xs text-[var(--color-muted-2)] mt-1">JPG, PNG, or WebP up to 20MB</p>
+            </div>
+            <div className="p-4 rounded-xl bg-[var(--color-surface-2)]">
+              <p className="text-2xl font-bold text-gradient mb-1">2.</p>
+              <p className="text-sm text-[var(--color-muted)]">AI generates a 3D model</p>
+              <p className="text-xs text-[var(--color-muted-2)] mt-1">~3 minutes on an RTX 5070 Ti</p>
+            </div>
+            <div className="p-4 rounded-xl bg-[var(--color-surface-2)]">
+              <p className="text-2xl font-bold text-gradient mb-1">3.</p>
+              <p className="text-sm text-[var(--color-muted)]">Download your STL</p>
+              <p className="text-xs text-[var(--color-muted-2)] mt-1">Watertight, print-ready, 350K+ vertices</p>
+            </div>
+          </div>
+          <p className="text-xs text-[var(--color-muted-2)] text-center italic">
+            No accounts, no watermarks, no catch. Just a guy with a GPU and a questionable electricity bill.
+          </p>
+        </div>
+      </div>
+
       <footer className="py-6 text-center border-t border-[var(--color-border)] space-y-1">
         <p className="text-xs text-[var(--color-muted-2)]">20 free uploads per day per IP</p>
         <p className="text-sm text-[var(--color-muted)] italic">Free forever, or until the electricity bill gets weird.</p>
