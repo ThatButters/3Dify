@@ -6,6 +6,8 @@ import Home from './pages/Home';
 import JobPage from './pages/JobPage';
 import Gallery from './pages/Gallery';
 import QueuePage from './pages/QueuePage';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
 
 // Admin
 import AdminRoute from './components/admin/AdminRoute';
@@ -39,6 +41,8 @@ export default function App() {
             <Route path="/job/:jobId" element={<JobPage />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/queue" element={<QueuePage />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
           </Route>
 
           {/* Admin login (no sidebar) */}

@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { Link } from 'react-router-dom';
 
 export default function UploadZone({ onUpload, disabled }) {
   const [preview, setPreview] = useState(null);
@@ -93,6 +94,13 @@ export default function UploadZone({ onUpload, disabled }) {
           </div>
         </div>
       </div>
+
+      <p className="mt-3 text-xs text-[var(--color-muted-2)] text-center">
+        By uploading, you agree to our{' '}
+        <Link to="/terms" className="text-[var(--color-accent)] hover:text-white transition-colors">
+          Terms of Use
+        </Link>
+      </p>
 
       {error && (
         <p className="mt-3 text-sm text-[var(--color-danger)] text-center">{error}</p>
