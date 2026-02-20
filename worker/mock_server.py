@@ -82,7 +82,7 @@ async def handle_worker(websocket):
     auth = websocket.request.headers.get("Authorization", "")
     expected = f"Bearer {config.AUTH_TOKEN}"
     if auth != expected:
-        logger.warning(f"Auth failed: got '{auth}'")
+        logger.warning(f"Auth failed from {websocket.remote_address}")
         await websocket.close(4001, "Unauthorized")
         return
 

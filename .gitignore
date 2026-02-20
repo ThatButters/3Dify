@@ -29,6 +29,10 @@ server/.venv/
 
 # Worker runtime
 worker/logs/
+*.log
+
+# Docker runtime
+data/
 
 # Frontend
 frontend/node_modules/
