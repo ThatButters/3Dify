@@ -1,5 +1,54 @@
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import WorkerStatusBadge from './WorkerStatusBadge';
+import { getJob } from '../api';
+
+function ActiveJobBadge() {
+  const { pathname } = useLocation();
+  const [jobId, setJobId] = useState(null);
+  const [status, setStatus] = useState(null);
+
+  useEffect(() => {
+    const id = localStorage.getItem('lastJobId');
+    if (!id) return;
+
+    // Don't show if we're already on this job's page
+    if (pathname === `/job/${id}`) {
+      setJobId(null);
+      return;
+    }
+
+    getJob(id)
+      .then((job) => {
+        // Only show for active or completed jobs
+        if (['pending', 'assigned', 'processing', 'complete'].includes(job.status)) {
+          setJobId(id);
+          setStatus(job.status);
+        } else {
+          setJobId(null);
+        }
+      })
+      .catch(() => setJobId(null));
+  }, [pathname]);
+
+  if (!jobId) return null;
+
+  const isActive = status !== 'complete';
+
+  return (
+    <Link
+      to={`/job/${jobId}`}
+      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+        isActive
+          ? 'bg-[var(--color-accent)]/10 text-[var(--color-accent)] hover:bg-[var(--color-accent)]/20'
+          : 'bg-[var(--color-success)]/10 text-[var(--color-success)] hover:bg-[var(--color-success)]/20'
+      }`}
+    >
+      {isActive && <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)] fade-pulse" />}
+      {isActive ? 'Job in progress' : 'View result'}
+    </Link>
+  );
+}
 
 export default function Header() {
   const { pathname } = useLocation();
@@ -48,6 +97,7 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-4">
+          <ActiveJobBadge />
           <WorkerStatusBadge />
           <a
             href="https://github.com/ThatButters/3Dify"
