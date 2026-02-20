@@ -149,6 +149,22 @@ async def get_job(job_id: str, session: AsyncSession = Depends(get_session)):
     return resp
 
 
+@router.get("/job/{job_id}/thumbnail")
+async def get_thumbnail(job_id: str, session: AsyncSession = Depends(get_session)):
+    result = await session.execute(select(Job).where(Job.id == job_id))
+    job = result.scalar_one_or_none()
+    if not job:
+        raise HTTPException(404, "Job not found")
+    if not job.thumbnail_path:
+        raise HTTPException(404, "Thumbnail not available")
+
+    path = storage.get_upload_path(job.thumbnail_path)
+    if not path.exists():
+        raise HTTPException(404, "Thumbnail file missing")
+
+    return FileResponse(path, media_type="image/jpeg")
+
+
 @router.get("/job/{job_id}/stl")
 async def download_stl(job_id: str, session: AsyncSession = Depends(get_session)):
     result = await session.execute(select(Job).where(Job.id == job_id))

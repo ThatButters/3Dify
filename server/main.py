@@ -44,6 +44,24 @@ async def lifespan(app: FastAPI):
     # Create tables (dev convenience — use alembic in production)
     await create_db()
 
+    # Reset orphaned jobs (assigned/processing at shutdown) back to pending
+    async with SQLModelAsyncSession(engine, expire_on_commit=False) as session:
+        from sqlalchemy import select
+        from models.job import Job, JobStatus
+        result = await session.execute(
+            select(Job).where(Job.status.in_([JobStatus.assigned, JobStatus.processing]))
+        )
+        orphaned = result.scalars().all()
+        for job in orphaned:
+            job.status = JobStatus.pending
+            job.assigned_at = None
+            job.current_step = None
+            job.progress_pct = 0
+            job.progress_message = None
+        if orphaned:
+            await session.commit()
+            logger.info("Re-queued %d orphaned jobs on startup", len(orphaned))
+
     # Singletons
     app.state.worker_bridge = WorkerBridge()
 
