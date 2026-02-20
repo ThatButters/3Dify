@@ -47,13 +47,29 @@ def load_model():
 
 
 def unload_model():
-    """Unload the pipeline to free VRAM."""
+    """Unload the pipeline to free VRAM and system RAM."""
     global _pipeline
     if _pipeline is not None:
         del _pipeline
         _pipeline = None
+
+        # Free VRAM
         img2stl.clear_vram()
-        logger.info("Pipeline unloaded, VRAM freed")
+
+        # Force Python garbage collection to release objects
+        import gc
+        gc.collect()
+
+        # Release unused heap memory back to OS (Linux only)
+        # Without this, Python keeps the RSS bloated even after del/gc
+        try:
+            import ctypes
+            libc = ctypes.CDLL("libc.so.6")
+            libc.malloc_trim(0)
+        except Exception:
+            pass
+
+        logger.info("Pipeline unloaded, VRAM + system RAM freed")
 
 
 def get_vram_threshold() -> float:

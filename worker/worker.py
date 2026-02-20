@@ -351,18 +351,17 @@ class Worker:
                 logger.warning(f"Send failed: {e}")
 
     async def _idle_unload_loop(self):
-        """Unload model from VRAM after idle timeout to free memory."""
+        """Unload model immediately after job completes (no queue waiting)."""
         while True:
-            await asyncio.sleep(60)  # check every minute
+            await asyncio.sleep(5)  # check frequently
             if (self.last_job_finished
-                    and not self.current_job_id
-                    and time.time() - self.last_job_finished > config.MODEL_IDLE_TIMEOUT_S):
+                    and not self.current_job_id):
                 import pipeline
                 if pipeline.is_model_loaded():
-                    logger.info(f"Idle for {config.MODEL_IDLE_TIMEOUT_S}s — unloading model from VRAM")
+                    logger.info("No pending jobs — unloading model to free memory")
                     loop = asyncio.get_running_loop()
                     await loop.run_in_executor(None, pipeline.unload_model)
-                    self.last_job_finished = None  # reset so we don't keep trying
+                    self.last_job_finished = None
 
     async def _heartbeat_loop(self):
         """Send GPU status every HEARTBEAT_INTERVAL_S seconds."""

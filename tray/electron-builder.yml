@@ -1,0 +1,29 @@
+appId: com.3dify.tray-monitor
+productName: 3Dify Monitor
+copyright: Copyright 2026 3Dify Contributors
+
+directories:
+  output: dist
+
+files:
+  - "**/*"
+  - "!dist"
+  - "!node_modules/.cache"
+
+win:
+  target:
+    - target: portable
+      arch: x64
+    - target: nsis
+      arch: x64
+
+nsis:
+  oneClick: true
+  perMachine: false
+  allowToChangeInstallationDirectory: false
+  createDesktopShortcut: false
+  createStartMenuShortcut: true
+  shortcutName: 3Dify Monitor
+
+portable:
+  artifactName: "3Dify-Monitor-${version}-portable.exe"

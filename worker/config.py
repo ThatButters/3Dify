@@ -35,7 +35,7 @@ DEFAULT_SEED = 42
 WS_MAX_SIZE = 100 * 1024 * 1024  # 100MB — STLs can be 30-50MB, base64 adds ~33%
 
 # Model lifecycle
-MODEL_IDLE_TIMEOUT_S = 300  # Unload model from VRAM after 5 min idle
+MODEL_IDLE_TIMEOUT_S = 120  # Unload model from VRAM after 2 min idle
 
 # Worker
 WORKER_VERSION = "1.0.0"

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self'">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3Dify Monitor</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="header">
+    <span class="logo">3Dify</span>
+    <span class="status-badge" id="status-badge">connecting</span>
+  </div>
+
+  <!-- Worker Card -->
+  <div class="card">
+    <div class="card-title">Worker</div>
+    <div class="card-row">
+      <span class="label">Status</span>
+      <span class="value" id="worker-status">—</span>
+    </div>
+    <div class="card-row">
+      <span class="label">GPU</span>
+      <span class="value" id="gpu-name">—</span>
+    </div>
+    <div class="card-row">
+      <span class="label">Local Process</span>
+      <span class="value" id="local-worker-status">—</span>
+    </div>
+  </div>
+
+  <!-- GPU Card -->
+  <div class="card">
+    <div class="card-title">GPU</div>
+    <div class="gauge-row">
+      <div class="gauge-bar">
+        <div class="gauge-fill" id="vram-bar" style="width: 0%"></div>
+      </div>
+      <span class="gauge-label" id="vram-label">— / — GB</span>
+    </div>
+    <div class="card-row">
+      <span class="label">Temperature</span>
+      <span class="value" id="gpu-temp">—</span>
+    </div>
+    <div class="card-row">
+      <span class="label">Utilization</span>
+      <span class="value" id="gpu-util">—</span>
+    </div>
+  </div>
+
+  <!-- Queue Card -->
+  <div class="card">
+    <div class="card-title">Queue</div>
+    <div class="queue-stats">
+      <div class="stat">
+        <span class="stat-num" id="q-pending">0</span>
+        <span class="stat-label">Pending</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num" id="q-processing">0</span>
+        <span class="stat-label">Processing</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num" id="q-complete">0</span>
+        <span class="stat-label">Done</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num" id="q-failed">0</span>
+        <span class="stat-label">Failed</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num" id="q-total">0</span>
+        <span class="stat-label">Total</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Jobs -->
+  <div class="card">
+    <div class="card-title">Recent Jobs</div>
+    <div id="jobs-list" class="jobs-list">
+      <div class="empty-msg">No recent jobs</div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="actions">
+    <button class="btn" id="pause-btn" disabled>Pause Processing</button>
+    <button class="btn btn-secondary" id="local-worker-btn">Start Worker</button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

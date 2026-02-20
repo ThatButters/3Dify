@@ -1,0 +1,17 @@
+{
+  "name": "3dify-tray",
+  "version": "1.0.0",
+  "description": "3Dify system tray monitor",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win",
+    "build:portable": "electron-builder --win portable"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  }
+}
