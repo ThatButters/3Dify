@@ -34,7 +34,7 @@ export default function ProgressView({ step, pct, message }) {
         />
       </div>
 
-      <p className="text-xs text-[var(--color-muted-2)] text-center mb-6 italic">
+      <p className="text-sm sm:text-base text-[var(--color-muted)] text-center mb-6 italic">
         Your model is being hallucinated into existence by a graphics card in someone's living room.
       </p>
 
