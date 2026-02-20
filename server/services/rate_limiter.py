@@ -1,6 +1,6 @@
 import ipaddress
 import time
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -47,7 +47,7 @@ async def check_rate_limit(session: AsyncSession, ip: str) -> tuple[bool, int]:
             return count < settings.rate_limit_per_day, remaining
 
     # Count uploads in last 24h
-    cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
+    cutoff = datetime.utcnow() - timedelta(hours=24)
     result = await session.execute(
         select(func.count())
         .select_from(AuditLog)

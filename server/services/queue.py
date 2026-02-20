@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -33,7 +33,7 @@ async def get_next_pending(session: AsyncSession) -> Job | None:
     job = result.scalar_one_or_none()
     if job:
         job.status = JobStatus.assigned
-        job.assigned_at = datetime.now(timezone.utc)
+        job.assigned_at = datetime.utcnow()
         await session.commit()
         await session.refresh(job)
     return job
@@ -71,7 +71,7 @@ async def mark_complete(
     job.is_watertight = is_watertight
     job.generation_time_s = generation_time_s
     job.gpu_metrics = gpu_metrics
-    job.completed_at = datetime.now(timezone.utc)
+    job.completed_at = datetime.utcnow()
     job.progress_pct = 100
     job.current_step = "complete"
     await session.commit()
@@ -89,7 +89,7 @@ async def mark_failed(
     job.status = JobStatus.failed
     job.error_message = error
     job.error_step = step
-    job.completed_at = datetime.now(timezone.utc)
+    job.completed_at = datetime.utcnow()
     await session.commit()
     await session.refresh(job)
     return job
@@ -97,7 +97,7 @@ async def mark_failed(
 
 async def expire_stale_jobs(session: AsyncSession) -> list[str]:
     """Mark assigned/processing jobs as expired if they've timed out."""
-    cutoff = datetime.now(timezone.utc) - timedelta(seconds=settings.job_timeout_s)
+    cutoff = datetime.utcnow() - timedelta(seconds=settings.job_timeout_s)
     result = await session.execute(
         select(Job).where(
             Job.status.in_([JobStatus.assigned, JobStatus.processing]),
@@ -108,7 +108,7 @@ async def expire_stale_jobs(session: AsyncSession) -> list[str]:
     for job in result.scalars().all():
         job.status = JobStatus.expired
         job.error_message = "Job timed out"
-        job.completed_at = datetime.now(timezone.utc)
+        job.completed_at = datetime.utcnow()
         expired_ids.append(job.id)
     if expired_ids:
         await session.commit()
