@@ -6,7 +6,7 @@ export default function ModelViewer({ glbUrl }) {
         auto-rotate
         camera-controls
         camera-orbit="0deg 75deg auto"
-        orientation="-90deg 0deg 0deg"
+        orientation="0deg -90deg 0deg"
         shadow-intensity="0.5"
         environment-image="neutral"
         style={{
