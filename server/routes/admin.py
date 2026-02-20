@@ -14,7 +14,7 @@ from models.job import Job, JobStatus
 from services import queue
 from services.worker_bridge import WorkerBridge
 
-router = APIRouter(prefix="/admin")
+router = APIRouter(prefix="/api/admin")
 
 
 def _verify_admin(authorization: str = Header(...)):
