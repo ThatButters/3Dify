@@ -142,7 +142,7 @@ class WorkerBridge:
                 await asyncio.sleep(2)
                 if not self.worker_ws or self.paused:
                     continue
-                if not self.gpu_status.get("available", False):
+                if self.gpu_status and not self.gpu_status.get("available", True):
                     continue
 
                 async with SQLModelAsyncSession(engine, expire_on_commit=False) as session:
