@@ -40,6 +40,7 @@ export default function JobPage() {
   const currentStep = progress?.step || job?.current_step;
   const currentPct = progress?.pct ?? job?.progress_pct ?? 0;
   const currentMessage = progress?.message || job?.progress_message;
+  const queuePosition = job?.queue_position;
 
   if (pollError) {
     return (
@@ -89,7 +90,7 @@ export default function JobPage() {
           </Link>
         </div>
       ) : (
-        <ProgressView step={currentStep} pct={currentPct} message={currentMessage} />
+        <ProgressView step={currentStep} pct={currentPct} message={currentMessage} queuePosition={queuePosition} />
       )}
     </div>
   );

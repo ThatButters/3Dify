@@ -1,4 +1,5 @@
 const STEP_LABELS = {
+  queued: 'In queue',
   waiting_gpu: 'Waiting for GPU',
   removing_background: 'Removing background',
   loading_model: 'Loading AI model',
@@ -9,6 +10,7 @@ const STEP_LABELS = {
 };
 
 const STEPS = [
+  'queued',
   'waiting_gpu',
   'removing_background',
   'loading_model',
@@ -17,9 +19,12 @@ const STEPS = [
   'exporting',
 ];
 
-export default function ProgressView({ step, pct, message }) {
-  const currentIdx = STEPS.indexOf(step);
+export default function ProgressView({ step, pct, message, queuePosition }) {
+  // If no step yet or status is pending, show queued
+  const effectiveStep = step || 'queued';
+  const currentIdx = STEPS.indexOf(effectiveStep);
   const percent = pct ?? 0;
+  const isQueued = effectiveStep === 'queued';
 
   return (
     <div className="w-full max-w-xl mx-auto page-enter">
@@ -35,7 +40,9 @@ export default function ProgressView({ step, pct, message }) {
       </div>
 
       <p className="text-sm sm:text-base text-[var(--color-muted)] text-center mb-6 italic">
-        Your model is being hallucinated into existence by a graphics card in someone's living room.
+        {isQueued
+          ? "Your photo is in line. The GPU is a one-at-a-time kind of gal."
+          : "Your model is being hallucinated into existence by a graphics card in someone's living room."}
       </p>
 
       <div className="glass-strong rounded-2xl p-8 glow-accent-sm">
@@ -43,18 +50,30 @@ export default function ProgressView({ step, pct, message }) {
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-[var(--color-surface-3)] flex items-center justify-center">
-              <svg className="w-6 h-6 text-[var(--color-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5" />
-              </svg>
+              {isQueued ? (
+                <svg className="w-6 h-6 text-[var(--color-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              ) : (
+                <svg className="w-6 h-6 text-[var(--color-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5" />
+                </svg>
+              )}
             </div>
             <div>
-              <p className="text-sm font-medium">Processing</p>
+              <p className="text-sm font-medium">{isQueued ? 'Queued' : 'Processing'}</p>
               <p className="text-xs text-[var(--color-muted)] font-mono">
-                {message || STEP_LABELS[step] || 'Starting...'}
+                {isQueued && queuePosition
+                  ? `Position #${queuePosition} in queue`
+                  : message || STEP_LABELS[effectiveStep] || 'Starting...'}
               </p>
             </div>
           </div>
-          <span className="text-2xl font-bold font-mono text-gradient">{percent}%</span>
+          {isQueued && queuePosition ? (
+            <span className="text-2xl font-bold font-mono text-gradient">#{queuePosition}</span>
+          ) : (
+            <span className="text-2xl font-bold font-mono text-gradient">{percent}%</span>
+          )}
         </div>
 
         {/* Steps */}
@@ -97,7 +116,10 @@ export default function ProgressView({ step, pct, message }) {
                 }`}>
                   {STEP_LABELS[s]}
                 </span>
-                {state === 'active' && step === 'generating_mesh' && message && (
+                {state === 'active' && s === 'queued' && queuePosition && (
+                  <span className="text-xs font-mono text-[var(--color-accent)] ml-auto">~{queuePosition * 3} min</span>
+                )}
+                {state === 'active' && s === 'generating_mesh' && message && (
                   <span className="text-xs font-mono text-[var(--color-accent)] ml-auto">{message}</span>
                 )}
               </div>
@@ -107,8 +129,12 @@ export default function ProgressView({ step, pct, message }) {
 
         {/* ETA footer */}
         <div className="mt-8 pt-6 border-t border-[var(--color-border)] flex items-center justify-between">
-          <span className="text-xs font-mono text-[var(--color-muted)]">Progress</span>
-          <span className="text-sm font-mono font-medium">{percent}%</span>
+          <span className="text-xs font-mono text-[var(--color-muted)]">
+            {isQueued ? 'Estimated wait' : 'Progress'}
+          </span>
+          <span className="text-sm font-mono font-medium">
+            {isQueued && queuePosition ? `~${queuePosition * 3} min` : `${percent}%`}
+          </span>
         </div>
       </div>
     </div>

@@ -60,7 +60,9 @@ function ExpandedRow({ job, onAction }) {
               <span className="text-[var(--color-muted)]">GPU Metrics:</span>
               <p className="font-mono mt-0.5">
                 Peak VRAM: {job.gpu_metrics.peak_vram_mb ? `${(job.gpu_metrics.peak_vram_mb / 1024).toFixed(1)} GB` : '—'}
-                {' · '}Energy: {job.gpu_metrics.energy_joules ? `${Math.round(job.gpu_metrics.energy_joules)} J` : '—'}
+                {' · '}Energy: {job.gpu_metrics.gpu_energy_j ? `${Math.round(job.gpu_metrics.gpu_energy_j)} J` : '—'}
+                {' · '}Avg Util: {job.gpu_metrics.avg_gpu_util_pct ? `${job.gpu_metrics.avg_gpu_util_pct}%` : '—'}
+                {' · '}Peak Temp: {job.gpu_metrics.peak_temp_c ? `${job.gpu_metrics.peak_temp_c}°C` : '—'}
               </p>
             </div>
           )}

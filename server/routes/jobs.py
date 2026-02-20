@@ -119,6 +119,16 @@ async def get_job(job_id: str, session: AsyncSession = Depends(get_session)):
         "created_at": job.created_at.isoformat(),
     }
 
+    # Add queue position for pending jobs
+    if job.status == JobStatus.pending:
+        from sqlalchemy import func
+        pos_result = await session.execute(
+            select(func.count())
+            .select_from(Job)
+            .where(Job.status == JobStatus.pending, Job.created_at < job.created_at)
+        )
+        resp["queue_position"] = pos_result.scalar_one() + 1  # 1-indexed
+
     if job.status == JobStatus.complete:
         resp.update({
             "vertex_count": job.vertex_count,
