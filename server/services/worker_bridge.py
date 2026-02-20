@@ -96,6 +96,7 @@ class WorkerBridge:
             self.gpu_status = {
                 "vram_free_gb": msg.get("vram_free_gb"),
                 "vram_used_gb": msg.get("vram_used_gb"),
+                "vram_total_gb": msg.get("vram_total_gb"),
                 "utilization_pct": msg.get("utilization_pct"),
                 "temp_c": msg.get("temp_c"),
                 "available": msg.get("available"),
