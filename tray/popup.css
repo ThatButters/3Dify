@@ -23,17 +23,11 @@
 
 body {
   font-family: 'Segoe UI', Inter, system-ui, sans-serif;
-  font-size: 13px;
+  font-size: 15px;
   color: var(--text);
   background: var(--bg);
   overflow-y: auto;
   user-select: none;
-  -webkit-app-region: drag;
-}
-
-/* Allow interaction with controls */
-button, .jobs-list, .card {
-  -webkit-app-region: no-drag;
 }
 
 .header {
@@ -44,7 +38,7 @@ button, .jobs-list, .card {
 }
 
 .logo {
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 700;
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
   -webkit-background-clip: text;
@@ -52,7 +46,7 @@ button, .jobs-list, .card {
 }
 
 .status-badge {
-  font-size: 11px;
+  font-size: 12px;
   padding: 2px 8px;
   border-radius: 10px;
   font-weight: 600;
@@ -73,7 +67,7 @@ button, .jobs-list, .card {
 }
 
 .card-title {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.8px;
@@ -90,12 +84,12 @@ button, .jobs-list, .card {
 
 .label {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .value {
   font-family: 'Cascadia Code', 'JetBrains Mono', monospace;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text);
 }
 
@@ -124,7 +118,7 @@ button, .jobs-list, .card {
 
 .gauge-label {
   font-family: 'Cascadia Code', 'JetBrains Mono', monospace;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted);
   white-space: nowrap;
 }
@@ -138,14 +132,14 @@ button, .jobs-list, .card {
 
 .stat-num {
   display: block;
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 700;
   font-family: 'Cascadia Code', 'JetBrains Mono', monospace;
 }
 .stat-num.danger { color: var(--danger); }
 
 .stat-label {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -168,12 +162,12 @@ button, .jobs-list, .card {
 
 .job-id {
   font-family: 'Cascadia Code', 'JetBrains Mono', monospace;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted);
 }
 
 .job-badge {
-  font-size: 10px;
+  font-size: 12px;
   padding: 1px 6px;
   border-radius: 8px;
   font-weight: 600;
@@ -188,7 +182,7 @@ button, .jobs-list, .card {
   text-align: center;
   color: var(--muted);
   padding: 8px;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 /* Action Button */
@@ -198,8 +192,8 @@ button, .jobs-list, .card {
 
 .btn {
   width: 100%;
-  padding: 8px 0;
-  font-size: 13px;
+  padding: 10px 0;
+  font-size: 15px;
   font-weight: 600;
   border: none;
   border-radius: 6px;
@@ -209,6 +203,7 @@ button, .jobs-list, .card {
   transition: opacity 0.2s;
 }
 .btn:hover { opacity: 0.9; }
+.btn:active:not(:disabled) { transform: scale(0.97); opacity: 0.8; }
 .btn:disabled { opacity: 0.4; cursor: default; }
 
 .btn-secondary {

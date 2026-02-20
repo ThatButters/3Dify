@@ -101,27 +101,57 @@ function updateUI(state) {
     localStatus.style.color = 'var(--muted)';
   }
 
-  // Pause/Resume button
+  // Pause/Resume button text
   const btn = $('#pause-btn');
   btn.disabled = !state.workerConnected;
-  if (state.paused) {
-    btn.textContent = 'Resume Processing';
-    btn.onclick = () => window.trayAPI.resumeWorker();
-  } else {
-    btn.textContent = 'Pause Processing';
-    btn.onclick = () => window.trayAPI.pauseWorker();
-  }
+  btn.textContent = state.paused ? 'Resume Processing' : 'Pause Processing';
 
-  // Local worker start/stop button
+  // Local worker button text (don't touch if mid-action)
   const localBtn = $('#local-worker-btn');
-  if (state.localWorkerRunning) {
-    localBtn.textContent = 'Stop Worker';
-    localBtn.onclick = () => window.trayAPI.stopLocalWorker();
-  } else {
-    localBtn.textContent = 'Start Worker';
-    localBtn.onclick = () => window.trayAPI.startLocalWorker();
+  if (!localBtn.dataset.busy) {
+    localBtn.disabled = false;
+    localBtn.textContent = state.localWorkerRunning ? 'Stop Worker' : 'Start Worker';
   }
 }
+
+// --- Button handlers via addEventListener (fire-once setup) ---
+
+$('#pause-btn').addEventListener('click', async () => {
+  if (!currentState) return;
+  if (currentState.paused) {
+    await window.trayAPI.resumeWorker();
+  } else {
+    await window.trayAPI.pauseWorker();
+  }
+});
+
+$('#local-worker-btn').addEventListener('click', async () => {
+  const btn = $('#local-worker-btn');
+  const isRunning = currentState && currentState.localWorkerRunning;
+
+  btn.dataset.busy = '1';
+  btn.disabled = true;
+  btn.textContent = isRunning ? 'Stopping...' : 'Starting...';
+
+  try {
+    const result = isRunning
+      ? await window.trayAPI.stopLocalWorker()
+      : await window.trayAPI.startLocalWorker();
+
+    if (!result.ok) {
+      btn.textContent = result.error || 'Failed';
+      setTimeout(() => { delete btn.dataset.busy; btn.disabled = false; }, 3000);
+      return;
+    }
+  } catch (e) {
+    btn.textContent = 'Error';
+    setTimeout(() => { delete btn.dataset.busy; btn.disabled = false; }, 3000);
+    return;
+  }
+
+  // Success — let next state update reset the button
+  setTimeout(() => { delete btn.dataset.busy; }, 2000);
+});
 
 // Listen for state updates from main process
 window.trayAPI.onStateUpdate((state) => {

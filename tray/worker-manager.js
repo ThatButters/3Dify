@@ -1,4 +1,4 @@
-const { spawn } = require('child_process');
+const { spawn, execSync } = require('child_process');
 
 // Configuration — set via environment variables or .env file
 const WSL_DISTRO = process.env.TRAY_WSL_DISTRO || 'Ubuntu-22.04';
@@ -19,7 +19,6 @@ function validatePaths() {
 
 let workerProcess = null;
 let workerRunning = false;
-let workerPid = null; // Linux-side PID for targeted kill
 let outputLines = [];
 const MAX_OUTPUT_LINES = 200;
 
@@ -29,6 +28,21 @@ function isRunning() {
 
 function getOutput() {
   return outputLines.join('\n');
+}
+
+/**
+ * Kill any orphaned worker.py processes in WSL.
+ * Called on tray app startup to clean up from previous crashes/exits.
+ */
+function killOrphans() {
+  try {
+    execSync(
+      `wsl -d ${WSL_DISTRO} -- bash -c "pkill -INT -f 'python worker.py' 2>/dev/null; exit 0"`,
+      { windowsHide: true, timeout: 5000 },
+    );
+  } catch {
+    // Ignore — no orphans or WSL not available
+  }
 }
 
 function start() {
@@ -50,17 +64,16 @@ function start() {
 
   outputLines = [];
   workerRunning = true;
-  workerPid = null;
 
-  // Write the worker's PID to stdout on launch so we can kill it precisely later.
-  // The 'echo $$' trick doesn't work here since bash -c forks python.
-  // Instead, we use a wrapper that writes the python PID.
+  // Run python in foreground so stdout/stderr pipe through normally.
+  // Use exec to replace bash with python so workerProcess.pid maps to the
+  // actual python process (via WSL), enabling clean shutdown.
   const bashCmd =
     `source '${CONDA_SH}' && ` +
     `conda activate '${CONDA_ENV}' && ` +
     `cd '${WORKER_DIR}' && ` +
-    `python worker.py --preload &` +
-    `echo "PID:$!" && wait`;
+    `set -a && [ -f .env ] && source .env && set +a && ` +
+    `exec python worker.py --preload`;
 
   workerProcess = spawn('wsl', ['-d', WSL_DISTRO, '--', 'bash', '-c', bashCmd], {
     stdio: ['ignore', 'pipe', 'pipe'],
@@ -70,14 +83,8 @@ function start() {
   workerProcess.stdout.on('data', (data) => {
     const lines = data.toString().split('\n').filter(Boolean);
     for (const line of lines) {
-      // Capture the Linux-side PID from our wrapper
-      const pidMatch = line.match(/^PID:(\d+)$/);
-      if (pidMatch) {
-        workerPid = pidMatch[1];
-      } else {
-        outputLines.push(line);
-        if (outputLines.length > MAX_OUTPUT_LINES) outputLines.shift();
-      }
+      outputLines.push(line);
+      if (outputLines.length > MAX_OUTPUT_LINES) outputLines.shift();
     }
   });
 
@@ -91,14 +98,12 @@ function start() {
 
   workerProcess.on('close', (code) => {
     workerRunning = false;
-    workerPid = null;
     outputLines.push(`[worker exited with code ${code}]`);
     workerProcess = null;
   });
 
   workerProcess.on('error', (err) => {
     workerRunning = false;
-    workerPid = null;
     outputLines.push(`[worker error: ${err.message}]`);
     workerProcess = null;
   });
@@ -112,36 +117,22 @@ function stop() {
   }
 
   try {
-    if (workerPid) {
-      // Kill the specific Linux-side PID, not a broad pkill pattern
-      spawn('wsl', ['-d', WSL_DISTRO, '--', 'kill', '-INT', String(workerPid)], {
-        windowsHide: true,
-      });
+    // Send SIGINT to the WSL process tree via the Windows-side PID.
+    // This propagates through WSL to the python process.
+    workerProcess.kill('SIGINT');
 
-      // Give it 5 seconds to shut down, then force kill
-      const pid = workerPid;
-      setTimeout(() => {
-        if (workerProcess && workerProcess.exitCode === null) {
-          spawn('wsl', ['-d', WSL_DISTRO, '--', 'kill', '-9', String(pid)], {
-            windowsHide: true,
-          });
-          workerProcess.kill();
-          workerRunning = false;
-          workerPid = null;
-          workerProcess = null;
-        }
-      }, 5000);
-    } else {
-      // Fallback: no PID captured, just kill the Windows-side process
-      workerProcess.kill();
-      workerRunning = false;
-      workerProcess = null;
-    }
+    // Give it 5 seconds to shut down, then force kill
+    setTimeout(() => {
+      if (workerProcess && workerProcess.exitCode === null) {
+        workerProcess.kill('SIGKILL');
+        workerRunning = false;
+        workerProcess = null;
+      }
+    }, 5000);
   } catch {
     if (workerProcess) {
       workerProcess.kill();
       workerRunning = false;
-      workerPid = null;
       workerProcess = null;
     }
   }
@@ -149,4 +140,22 @@ function stop() {
   return { ok: true };
 }
 
-module.exports = { start, stop, isRunning, getOutput };
+/**
+ * Force-stop the worker synchronously. Called during app quit
+ * to ensure no orphan processes are left behind.
+ */
+function forceStop() {
+  if (workerProcess && workerProcess.exitCode === null) {
+    try {
+      workerProcess.kill('SIGKILL');
+    } catch {
+      // ignore
+    }
+    workerProcess = null;
+    workerRunning = false;
+  }
+  // Also kill any WSL-side orphans as a safety net
+  killOrphans();
+}
+
+module.exports = { start, stop, forceStop, killOrphans, isRunning, getOutput };

@@ -39,8 +39,8 @@ function createPopupWindow(trayBounds) {
     return popupWindow;
   }
 
-  const width = 360;
-  const height = 480;
+  const width = 380;
+  const height = 560;
 
   // Position near tray icon (bottom-right on Windows)
   let x = Math.round(trayBounds.x + trayBounds.width / 2 - width / 2);
@@ -282,6 +282,9 @@ app.on('second-instance', () => {
 app.whenReady().then(() => {
   config.load();
 
+  // Kill any orphaned worker processes from previous sessions
+  workerManager.killOrphans();
+
   // Create tray icon
   createTray(onTrayClick, onMenuAction);
 
@@ -299,9 +302,7 @@ app.on('window-all-closed', (e) => {
 });
 
 app.on('before-quit', () => {
-  if (workerManager.isRunning()) {
-    workerManager.stop();
-  }
+  workerManager.forceStop();
   stopPolling();
   destroyTray();
 });
